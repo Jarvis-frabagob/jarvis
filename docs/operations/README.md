@@ -39,11 +39,15 @@ The DB runs in Postgres (Compose `db` service) and persists to the `postgres_dat
 Example with `pg_dump` (run on the host):
 
 ```bash
-# uses values from .env
-export POSTGRES_DB=mission_control
-export POSTGRES_USER=postgres
-export POSTGRES_PASSWORD=postgres
-export POSTGRES_PORT=5432
+# load variables from .env (trusted file only)
+set -a
+. ./.env
+set +a
+
+: "${POSTGRES_DB:?set POSTGRES_DB in .env}"
+: "${POSTGRES_USER:?set POSTGRES_USER in .env}"
+: "${POSTGRES_PORT:?set POSTGRES_PORT in .env}"
+: "${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env (strong, unique value; not \"postgres\")}"
 
 PGPASSWORD="$POSTGRES_PASSWORD" pg_dump \
   -h 127.0.0.1 -p "$POSTGRES_PORT" -U "$POSTGRES_USER" \
